@@ -4,6 +4,37 @@
 <h1>New post</h1>
 <form method="POST" class="post-form">{% csrf_token %}
     {{ form.as_p }}
+
+    <button onclick="speech ()">Слушать</button>
+
+    <script>
+        // Создаем распознаватель
+        var recognizer = new webkitSpeechRecognition();
+
+        // Ставим опцию, чтобы распознавание началось ещё до того, как пользователь закончит говорить
+        recognizer.interimResults = true;
+
+        // Какой язык будем распознавать?
+        recognizer.lang = 'ru-Ru';
+
+        // Используем колбек для обработки результатов
+        recognizer.onresult = function (event) {
+            var result = event.results[event.resultIndex];
+            if (result.isFinal) {
+                document.querySelector('textarea').innerHTML += (" " + result[0].transcript);
+            } else {
+                console.log('Промежуточный результат: ', result[0].transcript);
+            }
+        };
+
+        function speech() {
+            // Начинаем слушать микрофон и распознавать голос
+            recognizer.start();
+        }
+
+    </script>
+
+
     <button type="submit" class="save btn btn-default">Save</button>
 </form>
 {% endblock %}
